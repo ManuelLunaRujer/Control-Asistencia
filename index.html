@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>Control de asistencia | Banda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-mark" aria-hidden="true">♪</div>
+      <div>
+        <p class="eyebrow">CONTROL DE BANDA</p>
+        <h1>Asistencia</h1>
+      </div>
+      <div class="live-dot" title="Sistema activo" aria-label="Sistema activo"></div>
+    </header>
+
+    <nav class="tabs" aria-label="Secciones de la aplicación">
+      <button class="tab is-active" type="button" data-view="check-in">Fichar</button>
+      <button class="tab" type="button" data-view="history">Historial</button>
+    </nav>
+
+    <section id="check-in-view" class="view is-visible" aria-labelledby="check-in-title">
+      <div id="welcome-panel" class="glass-card welcome-card">
+        <span class="card-kicker">PRIMER ACCESO</span>
+        <h2 id="check-in-title">Identifica tu lugar en la banda</h2>
+        <p>Guarda tu usuario una sola vez para registrar tu asistencia en segundos.</p>
+        <label class="field-label" for="user-select">Tu nombre y función</label>
+        <select id="user-select" class="control" aria-label="Selecciona tu nombre">
+          <option value="" selected disabled>Selecciona tu usuario</option>
+          <option value="Sergio - Batería">Sergio - Batería</option>
+          <option value="Fernando - Batería">Fernando - Batería</option>
+          <option value="Adrián - Batería">Adrián - Batería</option>
+          <option value="Jesús - Batería">Jesús - Batería</option>
+          <option value="Roberto - Batería">Roberto - Batería</option>
+          <option value="Yago - Batería">Yago - Batería</option>
+          <option value="Jean Pierre - Batería">Jean Pierre - Batería</option>
+          <option value="Mario Laguna - Batería">Mario Laguna - Batería</option>
+          <option value="Gillermo Ginés (Morra) - Batería">Guillermo Ginés (Morra) - Batería</option>
+          <option value="Gillermo - Batería">Guillermo - Batería</option>
+          <option value="Francisco Laguna - Batería">Francisco Laguna - Batería</option>
+
+          <option value="Manuel Montaño - Corneta">Manuel Montaño - Corneta</option>
+          <option value="Moisés - Corneta">Moisés - Corneta</option>
+          <option value="Enrique - Corneta">Enrique - Corneta</option>
+          <option value="Antonio Caro - Corneta">Antonio Caro - Corneta</option>
+          <option value="Moisés - Corneta">Guada - Corneta</option>
+
+          <option value="Antonio Rivero - Bajos">Antonio Rivero - Bajos</option>
+          <option value="Benjamín - Bajos">Benjamín - Bajos</option>
+          <option value="Arcadio - Bajos">Arcadio - Bajos</option>
+          <option value="Juan Antonio - Bajos">Juan Antonio - Bajos</option>
+          <option value="Borja - Bajos">Borja - Bajos</option>
+          <option value="Marcos - Bajos">Marcos - Bajos</option>
+          <option value="Marcos Laguna Martin - Bajos">Marcos Laguna Martin - Bajos</option>
+          <option value="Julia - Trompeta 3">Mario Fuentes - Bajos</option>
+
+          <option value="Julia - Trompeta 3">Julia - Trompeta 3</option>
+          <option value="Juan Pablo - Trompeta 3">Juan Pablo - Trompeta 3</option>
+          <option value="Lucia - Trompeta 3">Lucia - Trompeta 3</option>
+          <option value="Ana Montero - Trompeta 3">Ana Montero - Trompeta 3</option>
+          <option value="Aitor - Trompeta 3">Aitor - Trompeta 3</option>
+          <option value="Andrea - Trompeta 3">Andrea - Trompeta 3</option>
+
+          <option value="Bella Rocío - Trompeta 2">Bella Rocío - Trompeta 2</option>
+          <option value="Ana Gutiérrez - Trompeta 2">Ana Gutiérrez - Trompeta 2</option>
+          <option value="Miguel Ángel - Trompeta 2">Miguel Ángel - Trompeta 2</option>
+          <option value="Álvaro - Trompeta 2">Álvaro - Trompeta 2</option>
+          <option value="María Jose - Trompeta 2">María Jose - Trompeta 2</option>
+
+          <option value="Érika - Trompeta 1">Érika - Trompeta 1</option>
+          <option value="Adrián González - Trompeta 1">Adrián González - Trompeta 1</option>
+          <option value="Ana Vidriel - Trompeta 1">Ana Vidriel - Trompeta 1</option>
+          <option value="Julen - Trompeta 1">Julen - Trompeta 1</option>
+          <option value="Lourdes - Trompeta 1">Lourdes - Trompeta 1</option>
+          <option value="David - Trompeta 1">David - Trompeta 1</option>
+          <option value="Manuel Luna - Trompeta 1">Manuel Luna - Trompeta 1</option>
+          <option value="Manuel Laguna - Trompeta 1">Manuel Laguna - Trompeta 1</option>
+
+        </select>
+        <button id="save-user" class="button button-primary" type="button">Guardar mi Usuario</button>
+      </div>
+
+      <div id="user-panel" class="glass-card user-card" hidden>
+        <span class="card-kicker">TODO LISTO</span>
+        <p class="greeting">¡Hola, <strong id="user-name"></strong>!</p>
+        <p class="muted-copy">Pulsa el botón cuando llegues al ensayo.</p>
+        <button id="register-attendance" class="button button-attendance" type="button">
+          <span class="button-icon" aria-hidden="true">✓</span>
+          REGISTRAR ASISTENCIA
+        </button>
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      </div>
+
+      <button id="change-user" class="change-user" type="button">Cambiar de usuario</button>
+    </section>
+
+    <section id="history-view" class="view" aria-labelledby="history-title" hidden>
+      <div class="history-heading">
+        <div>
+          <span class="card-kicker">REGISTRO</span>
+          <h2 id="history-title">Historial de asistencia</h2>
+        </div>
+        <button id="refresh-history" class="icon-button" type="button" aria-label="Actualizar historial" title="Actualizar historial">↻</button>
+      </div>
+      <div id="history-feedback" class="feedback" role="status" aria-live="polite"></div>
+      <div class="table-wrap glass-card">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Fecha</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+        <div id="empty-history" class="empty-state" hidden>No hay registros de asistencia todavía.</div>
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <span class="status-line"><span class="status-dot"></span> Conectado</span>
+      <span>v1.0</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
