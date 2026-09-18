@@ -1,5 +1,20 @@
+// CONFIG_ENSAYOS relaciona cada día con las voces que ensayan.
+// Los números significan: 0 domingo, 1 lunes, 2 martes, 3 miércoles,
+// 4 jueves, 5 viernes y 6 sábado.
+// Para cambiar los ensayos, modifica las voces dentro del día correspondiente.
+// Puedes añadir o quitar secciones, por ejemplo: ["Bajos", "Corneta"].
+// Usa ["TODOS"] cuando quieras programar un ensayo general para toda la banda.
+const CONFIG_ENSAYOS = {
+   
+  2: ['TODOS'],
+   
+  4: ['TODOS']
+  
+};
+
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlje0qgvWbZ7RyHHRADmPSNeLzfW4AU1HgR6w8ymhjl31J8fzsQjNH0SQPasLSFUPJ/exec';
 const ADMIN_PERMISSION_CODE = 'UsuarioAMVD';
+const USER_STORAGE_KEY = 'selectedUser';
 
 const userSelect = document.querySelector('#user-select');
 const saveUserButton = document.querySelector('#save-user');
@@ -20,7 +35,19 @@ const views = {
 };
 
 function getSavedUser() {
-  return localStorage.getItem('band_user');
+  return localStorage.getItem(USER_STORAGE_KEY);
+}
+
+function saveSelectedUser() {
+  const selectedUser = userSelect.value;
+  if (!selectedUser) {
+    showFeedback(feedback, 'Selecciona tu usuario para continuar.', 'error');
+    return false;
+  }
+
+  localStorage.setItem(USER_STORAGE_KEY, selectedUser);
+  userSelect.disabled = true;
+  return true;
 }
 
 function renderUserState() {
@@ -29,6 +56,7 @@ function renderUserState() {
 
   welcomePanel.hidden = hasUser;
   userPanel.hidden = !hasUser;
+  userSelect.disabled = hasUser;
 
   if (hasUser) {
     userName.textContent = savedUser;
@@ -49,19 +77,47 @@ function clearFeedback(element) {
 }
 
 function saveUser() {
-  const selectedUser = userSelect.value;
-  if (!selectedUser) {
-    showFeedback(feedback, 'Selecciona tu usuario para continuar.', 'error');
+  if (!saveSelectedUser()) return;
+
+  clearFeedback(feedback);
+  renderUserState();
+  updateAttendanceAvailability();
+}
+
+function updateAttendanceAvailability(showStatus = true) {
+  const savedUser = getSavedUser();
+  const today = new Date().getDay();
+  const sectionsToday = CONFIG_ENSAYOS[today] || [];
+
+  if (!savedUser) {
+    registerButton.disabled = true;
     return;
   }
 
-  localStorage.setItem('band_user', selectedUser);
-  clearFeedback(feedback);
-  renderUserState();
+  if (sectionsToday.length === 0) {
+    registerButton.disabled = true;
+    if (showStatus) showFeedback(feedback, 'Hoy no hay ensayo programado', '');
+    return;
+  }
+
+  if (sectionsToday.includes('TODOS')) {
+    registerButton.disabled = false;
+    if (showStatus) clearFeedback(feedback);
+    return;
+  }
+
+  const userCanAttend = sectionsToday.some((section) => savedUser.includes(section));
+  registerButton.disabled = !userCanAttend;
+
+  if (userCanAttend) {
+    if (showStatus) clearFeedback(feedback);
+  } else if (showStatus) {
+    showFeedback(feedback, `Hoy ensayan: ${sectionsToday.join(', ')}.`, '');
+  }
 }
 
 async function registerAttendance() {
-  const savedUser = localStorage.getItem('band_user');
+  const savedUser = getSavedUser();
   if (!savedUser) {
     renderUserState();
     return;
@@ -83,7 +139,7 @@ async function registerAttendance() {
   } catch (error) {
     showFeedback(feedback, 'No se pudo registrar la asistencia. Inténtalo de nuevo.', 'error');
   } finally {
-    registerButton.disabled = false;
+    updateAttendanceAvailability(false);
     registerButton.removeAttribute('aria-busy');
   }
 }
@@ -160,11 +216,19 @@ changeUserButton.addEventListener('click', () => {
     return;
   }
 
-  localStorage.removeItem('band_user');
+  localStorage.removeItem(USER_STORAGE_KEY);
+  userSelect.disabled = false;
+  userSelect.value = '';
   clearFeedback(feedback);
   renderUserState();
   userSelect.focus();
+  updateAttendanceAvailability();
 });
 tabs.forEach((tab) => tab.addEventListener('click', () => switchView(tab.dataset.view)));
 
+userSelect.addEventListener('change', () => {
+  saveUser();
+});
+
 renderUserState();
+updateAttendanceAvailability();
