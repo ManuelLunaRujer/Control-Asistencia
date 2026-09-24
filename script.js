@@ -15,6 +15,7 @@ const CONFIG_ENSAYOS = {
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlje0qgvWbZ7RyHHRADmPSNeLzfW4AU1HgR6w8ymhjl31J8fzsQjNH0SQPasLSFUPJ/exec';
 const ADMIN_PERMISSION_CODE = 'UsuarioAMVD';
 const USER_STORAGE_KEY = 'selectedUser';
+const ATTENDANCE_STORAGE_KEY = 'attendanceByUser';
 
 const userSelect = document.querySelector('#user-select');
 const saveUserButton = document.querySelector('#save-user');
@@ -36,6 +37,24 @@ const views = {
 
 function getSavedUser() {
   return localStorage.getItem(USER_STORAGE_KEY);
+}
+
+function getTodayKey() {
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${today.getFullYear()}-${month}-${day}`;
+}
+
+function hasRegisteredToday(user) {
+  const attendanceByUser = JSON.parse(localStorage.getItem(ATTENDANCE_STORAGE_KEY) || '{}');
+  return attendanceByUser[user] === getTodayKey();
+}
+
+function saveTodayAttendance(user) {
+  const attendanceByUser = JSON.parse(localStorage.getItem(ATTENDANCE_STORAGE_KEY) || '{}');
+  attendanceByUser[user] = getTodayKey();
+  localStorage.setItem(ATTENDANCE_STORAGE_KEY, JSON.stringify(attendanceByUser));
 }
 
 function saveSelectedUser() {
@@ -94,6 +113,12 @@ function updateAttendanceAvailability(showStatus = true) {
     return;
   }
 
+  if (hasRegisteredToday(savedUser)) {
+    registerButton.disabled = true;
+    if (showStatus) showFeedback(feedback, 'Ya has registrado tu asistencia hoy.', '');
+    return;
+  }
+
   if (sectionsToday.length === 0) {
     registerButton.disabled = true;
     if (showStatus) showFeedback(feedback, 'Hoy no hay ensayo programado', '');
@@ -123,6 +148,11 @@ async function registerAttendance() {
     return;
   }
 
+  if (hasRegisteredToday(savedUser)) {
+    updateAttendanceAvailability();
+    return;
+  }
+
   registerButton.disabled = true;
   registerButton.setAttribute('aria-busy', 'true');
   clearFeedback(feedback);
@@ -134,6 +164,7 @@ async function registerAttendance() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre: savedUser })
     });
+    saveTodayAttendance(savedUser);
     showFeedback(feedback, '¡Asistencia registrada con éxito!', 'success');
     window.setTimeout(() => clearFeedback(feedback), 4000);
   } catch (error) {
